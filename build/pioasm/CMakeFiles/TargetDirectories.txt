@@ -1,3 +1,0 @@
-/home/djfm/projects/picolight/build/pioasm/CMakeFiles/pioasm.dir
-/home/djfm/projects/picolight/build/pioasm/CMakeFiles/edit_cache.dir
-/home/djfm/projects/picolight/build/pioasm/CMakeFiles/rebuild_cache.dir
