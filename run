@@ -8,12 +8,12 @@ cd ..
 
 target="/media/$USER/RPI-RP2"
 until [ -d "$target" ]; do
-    echo "Please unplug and plug the pico while holding down its BOOTSEL button..."
+    echo "Please unplug the pico and plug it back in while holding down its BOOTSEL button..."
     sleep 1
 done
 
 echo "Pico device detected at: $target"
-echo "you can now release the BOOTSEL button."
+echo "(!) You can now release the BOOTSEL button :)"
 
 echo "Waiting a bit before the upload..."
 sleep 5
