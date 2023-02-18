@@ -1,0 +1,28 @@
+#!/bin/env bash
+cd build || exit 1
+
+cmake ..
+make
+
+cd ..
+
+target="/media/$USER/RPI-RP2"
+until [ -d "$target" ]; do
+    echo "Please unplug and plug the pico while holding down its BOOTSEL button..."
+    sleep 1
+done
+
+echo "Pico device detected at: $target"
+echo "Waiting a bit before the upload..."
+sleep 5
+
+if cp build/pico.uf2 "$target"; then
+    echo "Successfully copied pico.uf2 to $target"
+else
+    echo "Failed to copy pico.uf2 to $target"
+    exit 2
+fi
+
+echo "Waiting a bit before starting minicom..."
+
+./displayOutput

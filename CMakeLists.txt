@@ -17,7 +17,7 @@ add_executable(pico
     main.cpp
 )
 
-target_link_libraries(pico pico_stdlib)
+target_link_libraries(pico pico_stdlib hardware_adc)
 
 # enable usb output, disable uart output
 pico_enable_stdio_usb(pico 1)

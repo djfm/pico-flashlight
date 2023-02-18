@@ -1,2 +1,14 @@
 #!/bin/env bash
-minicom -b 115200 -o -D /dev/ttyACM0
+
+tty=/dev/ttyACM0
+
+until [ -e "$tty" ]; do
+    echo "Waiting for $tty to appear..."
+    sleep 1
+done
+
+echo "Starting minicom, press Ctrl+A, X to exit..."
+
+sleep 2
+
+minicom -b 115200 -o -D "$tty"
