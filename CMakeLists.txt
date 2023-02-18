@@ -6,7 +6,7 @@ set(PICO_SDK_PATH "/home/djfm/code/pico-sdk")
 # note: this must happen before project()
 include(pico_sdk_import.cmake)
 
-project(my_project)
+project(picolight)
 
 # initialize the Raspberry Pi Pico SDK
 pico_sdk_init()
@@ -18,4 +18,9 @@ add_executable(pico
 )
 
 target_link_libraries(pico pico_stdlib)
+
+# enable usb output, disable uart output
+pico_enable_stdio_usb(pico 1)
+pico_enable_stdio_uart(pico 0)
+
 pico_add_extra_outputs(pico)
