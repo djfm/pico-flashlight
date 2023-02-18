@@ -12,16 +12,37 @@ until [ -d "$target" ]; do
     sleep 1
 done
 
-echo "Pico device detected at: $target"
+echo "Pico device detected at $target, you can now release the BOOTSEL button."
+
 echo "Waiting a bit before the upload..."
 sleep 5
 
-if cp build/pico.uf2 "$target"; then
-    echo "Successfully copied pico.uf2 to $target"
-else
-    echo "Failed to copy pico.uf2 to $target"
-    exit 2
-fi
+upload () {
+    try_number=$1
+
+    if [ "$try_number" -gt 3 ]; then
+        echo "Failed to upload after 3 tries, giving up."
+        exit 1
+    fi
+
+    echo "Uploading to $target..."
+
+    if cp build/pico.uf2 "$target"; then
+        echo "Successfully copied pico.uf2 to $target"
+    else
+        echo "Failed to copy pico.uf2 to $target"
+        exit 2
+    fi
+
+    sleep 5
+    if [ -d "$target" ]; then
+        echo "Pico device still detected at $target, upload must have failed, redoing..."
+        upload $((try_number + 1))
+    fi
+}
+
+upload 1
+
 
 echo "Waiting a bit before starting minicom..."
 
