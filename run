@@ -12,7 +12,8 @@ until [ -d "$target" ]; do
     sleep 1
 done
 
-echo "Pico device detected at $target, you can now release the BOOTSEL button."
+echo "Pico device detected at: $target"
+echo "you can now release the BOOTSEL button."
 
 echo "Waiting a bit before the upload..."
 sleep 5
