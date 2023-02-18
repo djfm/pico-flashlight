@@ -21,6 +21,10 @@ int main() {
     adc_gpio_init(POT_0);
     adc_gpio_init(POT_1);
 
+    constexpr int precision = 25;
+    int level_max = floor(4095 / precision);
+    int denominator = level_max * (level_max + 1);
+
     while (true) {
         adc_select_input(0);
         uint16_t pot_0 = adc_read();
@@ -28,13 +32,16 @@ int main() {
         adc_select_input(1);
         uint16_t pot_1 = adc_read();
 
-        int level_0 = floor(pot_0 / 25);
-        int level_1 = floor(pot_1 / 25);
+        int coarse = floor(pot_0 / precision);
+        int fine = floor(pot_1 / precision);
+
+        int level = coarse * level_max + fine;
+        float pct = (float)level / denominator;
 
         printf(
-            "POT_0: %04d, POT_1: %04d, level_0: %04d, level_1: %04d\n",
+            "POT_0: %04d, POT_1: %04d, level_0: %04d, level_1: %04d, level: %05d, pct: %f\n",
             pot_0, pot_1,
-            level_0, level_1
+            coarse, fine, level, pct
         );
 
         sleep_ms(200);
