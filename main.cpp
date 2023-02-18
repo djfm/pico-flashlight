@@ -1,6 +1,8 @@
 // https://github.com/raspberrypi/pico-sdk
 // https://datasheets.raspberrypi.com/pico/getting-started-with-pico.pdf#page=15
 
+#include <cmath>
+
 #include <stdio.h>
 
 #include "pico/stdlib.h"
@@ -26,7 +28,14 @@ int main() {
         adc_select_input(1);
         uint16_t pot_1 = adc_read();
 
-        printf("POT_0: %04d, POT_1: %04d\n", pot_0, pot_1);
+        int level_0 = floor(pot_0 / 25);
+        int level_1 = floor(pot_1 / 25);
+
+        printf(
+            "POT_0: %04d, POT_1: %04d, level_0: %04d, level_1: %04d\n",
+            pot_0, pot_1,
+            level_0, level_1
+        );
 
         sleep_ms(200);
     }
