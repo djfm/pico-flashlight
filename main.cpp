@@ -46,14 +46,10 @@ int main() {
         int level = coarse * 4096 + fine;
         float pct = level / level_max;
 
-
-
         adc_select_input(2);
         uint16_t battery = adc_read();
         float battery_v_divided = battery * 3.3 / 4095;
         float battery_v = battery_v_divided * BATTERY_V_DIVIDER;
-
-
 
         auto now = time_ms();
         if (now > last + 500) {
