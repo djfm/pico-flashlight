@@ -15,8 +15,12 @@ constexpr uint8_t POT_0 = 26;
 constexpr uint8_t POT_1 = 27;
 constexpr uint8_t BATTERY_PIN = 28;
 constexpr uint8_t PWM_PIN = 0;
-constexpr uint16_t PWM_WRAP = 0xFFFF;
+constexpr uint16_t PWM_WRAP = 2048;
 constexpr float BATTERY_V_DIVIDER = 25.4375;
+
+static uint32_t clock_speed;
+static float pwm_divider;
+static float pwm_frequency;
 
 uint32_t time_ms() {
     return to_ms_since_boot(get_absolute_time());
@@ -28,15 +32,21 @@ void set_duty_cycle(uint pwm_pin, float duty_cycle) {
     pwm_set_chan_level(slice_num, channel, duty_cycle * PWM_WRAP);
 }
 
-void init_pwm(uint pwm_pin, int frequency = 10000) {
-    auto clock_speed = clock_get_hz(clk_sys);
-    int divider = clock_speed / frequency;
-    printf("clock_speed: %d, PWM divider: %d\n", clock_speed, divider);
+void init_pwm(uint pwm_pin, int frequency = 50000) {
+    clock_speed = clock_get_hz(clk_sys);
+    pwm_divider = (float)clock_speed / (PWM_WRAP * frequency);
 
+    if (pwm_divider < 1) {
+        pwm_divider = 1;
+    } else if (pwm_divider > 256) {
+        pwm_divider = 256;
+    }
+
+    pwm_frequency = (float)clock_speed / (pwm_divider * PWM_WRAP);
 
     gpio_set_function(pwm_pin, GPIO_FUNC_PWM);
     uint slice_num = pwm_gpio_to_slice_num(pwm_pin);
-    pwm_set_clkdiv(slice_num, divider);
+    pwm_set_clkdiv(slice_num, pwm_divider);
     pwm_set_wrap(slice_num, PWM_WRAP);
     set_duty_cycle(pwm_pin, 0);
     pwm_set_enabled(slice_num, true);
@@ -115,13 +125,18 @@ int main() {
         avg_battery_v.add(battery_v);
 
         auto now = time_ms();
-        if (now > last + 200) {
+        if (now > last + 5000) {
             int loops_per_second = loops * 1000 / (now - start);
             printf("dt: %d, loops / s: %d\n", now - last, loops_per_second);
 
             printf(
                 "coarse: %04d, fine: %04d, level: %05d, pct: %1.5f\n",
                 coarse, fine, level, pct
+            );
+
+            printf(
+                "pwm_divider: %f, clock_speed: %d, pwm_frequency: %f\n",
+                pwm_divider, clock_speed, pwm_frequency
             );
 
             printf(
