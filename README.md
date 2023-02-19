@@ -56,6 +56,7 @@ where \$frequency_{clock}\$ is the frequency of the pico, which is generally 125
 
 And we have the constraints that:
 
-$$pwm_wrap \in [1, 65535]$$
-$$divider \in [|1, 65535|]$$
+$$pwm_{wrap} \in [1, 65535]$$
+
+$$divider \in [1 65535] \int \N$$
 
