@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "BOOTSEL",
+        "clkdiv",
         "gpio",
         "minicom",
         "pico",

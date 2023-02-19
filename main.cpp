@@ -8,14 +8,38 @@
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
 #include "hardware/adc.h"
+#include "hardware/pwm.h"
+#include "hardware/clocks.h"
 
-constexpr int POT_0 = 26;
-constexpr int POT_1 = 27;
-constexpr int BATTERY_PIN = 28;
+constexpr uint8_t POT_0 = 26;
+constexpr uint8_t POT_1 = 27;
+constexpr uint8_t BATTERY_PIN = 28;
+constexpr uint8_t PWM_PIN = 0;
+constexpr uint16_t PWM_WRAP = 0xFFFF;
 constexpr float BATTERY_V_DIVIDER = 25.4375;
 
 uint32_t time_ms() {
     return to_ms_since_boot(get_absolute_time());
+}
+
+void set_duty_cycle(uint pwm_pin, float duty_cycle) {
+    auto slice_num = pwm_gpio_to_slice_num(pwm_pin);
+    auto channel = pwm_gpio_to_channel(pwm_pin);
+    pwm_set_chan_level(slice_num, channel, duty_cycle * PWM_WRAP);
+}
+
+void init_pwm(uint pwm_pin, int frequency = 10000) {
+    auto clock_speed = clock_get_hz(clk_sys);
+    int divider = clock_speed / frequency;
+    printf("clock_speed: %d, PWM divider: %d\n", clock_speed, divider);
+
+
+    gpio_set_function(pwm_pin, GPIO_FUNC_PWM);
+    uint slice_num = pwm_gpio_to_slice_num(pwm_pin);
+    pwm_set_clkdiv(slice_num, divider);
+    pwm_set_wrap(slice_num, PWM_WRAP);
+    set_duty_cycle(pwm_pin, 0);
+    pwm_set_enabled(slice_num, true);
 }
 
 class MovingAverage {
@@ -60,6 +84,8 @@ int main() {
     adc_gpio_init(POT_1);
     adc_gpio_init(BATTERY_PIN);
 
+    init_pwm(PWM_PIN);
+
     constexpr float level_max = 4095 * 4096 + 4095;
 
     auto start = time_ms();
@@ -79,6 +105,8 @@ int main() {
 
         int level = coarse * 4096 + fine;
         float pct = level / level_max;
+
+        set_duty_cycle(PWM_PIN, pct);
 
         adc_select_input(2);
         uint16_t battery = adc_read();
