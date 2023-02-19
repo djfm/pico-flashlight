@@ -58,6 +58,6 @@ And we have the constraints that:
 
 $$
 pwm_wrap \in [1, 65535]
-divider \in [[1, 65535]]
+divider \in (1, 65535)
 $$
 
