@@ -49,16 +49,15 @@ The SDK understands slice numbers and not pins, but there are functions to conve
 
 The frequency of the PWM is governed by the equation
 
-```latex
-divider = \frac{clock_frequency}{pwm_wrap * desired_frequency}
-```
+
+$$divider = \frac{clock_frequency}{pwm_wrap * desired_frequency}$$
 
 where `clock_frequency` is the frequency of the clock used by the PWM, which is 125MHz.
 
 And we have the constraints that:
 
-```latex
+$$
 pwm_wrap \in \intv{1, 65535}
 divider \in \Iintv{1, 65535}
-```
+$$
 
