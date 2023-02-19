@@ -50,7 +50,7 @@ The SDK understands slice numbers and not pins, but there are functions to conve
 The frequency of the PWM is governed by the equation
 
 
-$$divider = \frac{frequency_{clock}}{pwm_wrap * desired_frequency}$$
+$$divider = \frac{frequency_{clock}}{pwm_{wrap} * frequency_{desired}}$$
 
 where \$frequency_{clock}\$ is the frequency of the pico, which is generally 125MHz.
 
