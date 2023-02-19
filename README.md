@@ -60,3 +60,6 @@ $$pwm_{wrap} \in [1, 65535]$$
 
 $$divider \in [1, 256] \cap N$$
 
+To get the most precision possible in setting our duty cycle, we want to set \$pwm_{wrap}\$ to the maximum value possible.
+
+The current code could be optimized, it strikes a good balance for a PWM at 50kHz.
