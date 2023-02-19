@@ -58,5 +58,5 @@ And we have the constraints that:
 
 $$pwm_{wrap} \in [1, 65535]$$
 
-$$divider \in [1, 65535] \cap \N$$
+$$divider \in [1, 256] \cap \natural$$
 
