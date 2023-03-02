@@ -5,6 +5,10 @@ and set its path in the `CMakeLists.txt` file.
 
 I'll make a schematic later.
 
+I'm making this for educational purposes.
+
+The documentation is not meant for others yet.
+
 ## Development commands
 
 ### Display the debug output
