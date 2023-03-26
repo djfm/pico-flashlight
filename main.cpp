@@ -28,6 +28,9 @@ static uint32_t clock_speed;
 static float pwm_divider;
 static float pwm_frequency;
 
+constexpr float adj_steps = 15;
+constexpr float level_max = (adj_steps - 1) * (adj_steps + 1);
+
 uint32_t time_ms() {
     return to_ms_since_boot(get_absolute_time());
 }
@@ -102,24 +105,29 @@ int main() {
 
     init_pwm(PWM_PIN, 10000);
 
-    constexpr float level_max = 4095 * 4096 + 4095;
-
     auto start = time_ms();
     auto last = start;
     uint64_t loops = 0;
 
     MovingAverage avg_battery_v(1000);
+    MovingAverage coarse_avg(100);
+    MovingAverage fine_avg(100);
 
     while (true) {
         loops++;
 
         adc_select_input(0);
-        uint16_t coarse = adc_read();
+        uint16_t coarse_i = adc_read();
+        coarse_avg.add(coarse_i);
 
         adc_select_input(1);
-        uint16_t fine = adc_read();
+        uint16_t fine_i = adc_read();
+        fine_avg.add(fine_i);
 
-        int level = coarse * 4096 + fine;
+        int coarse = floor(coarse_avg.get() * adj_steps / 4096);
+        int fine = floor(fine_avg.get() * adj_steps / 4096);
+
+        int level = coarse * adj_steps + fine;
         float pct = level / level_max;
 
         adc_select_input(2);
@@ -144,8 +152,8 @@ int main() {
             printf("dt: %d, loops / s: %d\n", now - last, loops_per_second);
 
             printf(
-                "coarse: %04d, fine: %04d, level: %05d, pct: %1.5f\n",
-                coarse, fine, level, pct
+                "coarse: %04d, fine: %04d, level: %04d, pct: %3.2f\n",
+                coarse, fine, level, 100*pct
             );
 
             printf(
