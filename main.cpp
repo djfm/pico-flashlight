@@ -18,6 +18,12 @@ constexpr uint8_t PWM_PIN = 0;
 constexpr uint16_t PWM_WRAP = 2048;
 constexpr float BATTERY_V_DIVIDER = 25.4375;
 
+// assuming a 4-cell LiPo battery
+constexpr float BATTERY_V_CORRECTION = 15.4 / 16.82;
+constexpr float BATTERY_COEFF = BATTERY_V_DIVIDER * BATTERY_V_CORRECTION;
+constexpr float BATTERY_MAX_V = 4 * 4.2;
+constexpr float BATTERY_MIN_V = 4 * 3.3;
+
 static uint32_t clock_speed;
 static float pwm_divider;
 static float pwm_frequency;
@@ -116,16 +122,24 @@ int main() {
         int level = coarse * 4096 + fine;
         float pct = level / level_max;
 
-        set_duty_cycle(PWM_PIN, pct);
-
         adc_select_input(2);
         uint16_t battery = adc_read();
         float_t battery_v_divided = battery * 3.3 / 4095;
-        float_t battery_v = battery_v_divided * BATTERY_V_DIVIDER;
+        float_t battery_v = battery_v_divided * BATTERY_COEFF;
         avg_battery_v.add(battery_v);
 
+        float battery_pct = 100 * (avg_battery_v.get() - BATTERY_MIN_V) / (BATTERY_MAX_V - BATTERY_MIN_V);
+
+        // under-voltage protection
+        if (battery_pct >= 5) {
+            set_duty_cycle(PWM_PIN, pct);
+        } else {
+            set_duty_cycle(PWM_PIN, 0);
+        }
+
+
         auto now = time_ms();
-        if (now > last + 5000) {
+        if (now > last + 500) {
             int loops_per_second = loops * 1000 / (now - start);
             printf("dt: %d, loops / s: %d\n", now - last, loops_per_second);
 
@@ -140,8 +154,8 @@ int main() {
             );
 
             printf(
-                "battery: %04d, battery_v_divided: %1.5f, avg_battery_v: %2.5f\n\n",
-                battery, battery_v_divided, avg_battery_v.get()
+                "battery: %04d, battery_v_divided: %1.5f, avg_battery_v: %2.5f, battery_charge: %3.1f%\n\n",
+                battery, battery_v_divided, avg_battery_v.get(), battery_pct
             );
 
             last = now;
