@@ -100,7 +100,7 @@ int main() {
     adc_gpio_init(POT_1);
     adc_gpio_init(BATTERY_PIN);
 
-    init_pwm(PWM_PIN, 5000);
+    init_pwm(PWM_PIN, 10000);
 
     constexpr float level_max = 4095 * 4096 + 4095;
 
