@@ -138,9 +138,11 @@ int main() {
 
         float battery_pct = 100 * (avg_battery_v.get() - BATTERY_MIN_V) / (BATTERY_MAX_V - BATTERY_MIN_V);
 
+        float duty_cycle = pct;
+
         // under-voltage protection
-        if (battery_pct >= 5) {
-            set_duty_cycle(PWM_PIN, pct);
+        if (battery_pct >= 1) {
+            set_duty_cycle(PWM_PIN, duty_cycle);
         } else {
             set_duty_cycle(PWM_PIN, 0);
         }
@@ -152,8 +154,8 @@ int main() {
             printf("dt: %d, loops / s: %d\n", now - last, loops_per_second);
 
             printf(
-                "coarse: %04d, fine: %04d, level: %04d, pct: %3.2f\n",
-                coarse, fine, level, 100*pct
+                "coarse: %04d, fine: %04d, level: %04d, pct: %3.2f, duty_cycle: %3.2f\n",
+                coarse, fine, level, 100*pct, 100*duty_cycle
             );
 
             printf(
