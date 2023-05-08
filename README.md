@@ -9,6 +9,12 @@ I'm making this for educational purposes.
 
 The documentation is not meant for others yet.
 
+## VSCode intellisense
+
+Clang doesn't seem to work great or at least I dunno how to make it work.
+Use the native Microsoft intellisense C/C++ extensions,
+ensure that C++ intellisense is enabled in settings.
+
 ## Development commands
 
 ### Display the debug output
