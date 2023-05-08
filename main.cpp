@@ -163,6 +163,12 @@ int main() {
 
         auto now = time_ms();
         if (now > last + 500) {
+             if (btn) {
+                printf("btn is pressed\n");
+            } else {
+                printf("btn is not pressed\n");
+            }
+
             int loops_per_second = loops * 1000 / (now - start);
             printf("dt: %d, loops / s: %d\n", now - last, loops_per_second);
 
