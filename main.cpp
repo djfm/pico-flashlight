@@ -13,6 +13,7 @@
 
 constexpr uint8_t POT_0 = 26;
 constexpr uint8_t POT_1 = 27;
+constexpr uint8_t BTN_0 = 2;
 constexpr uint8_t BATTERY_PIN = 28;
 constexpr uint8_t PWM_PIN = 0;
 constexpr uint16_t PWM_WRAP = 2048;
@@ -103,6 +104,9 @@ int main() {
     adc_gpio_init(POT_1);
     adc_gpio_init(BATTERY_PIN);
 
+    gpio_init(BTN_0);
+    gpio_set_dir(BTN_0, GPIO_IN);
+
     init_pwm(PWM_PIN, 10000);
 
     auto start = time_ms();
@@ -147,9 +151,16 @@ int main() {
             set_duty_cycle(PWM_PIN, 0);
         }
 
+        auto btn = gpio_get(BTN_0);
 
         auto now = time_ms();
         if (now > last + 500) {
+            if (btn) {
+                printf("btn pressed\n");
+            } else {
+                printf("btn not pressed\n");
+            }
+
             int loops_per_second = loops * 1000 / (now - start);
             printf("dt: %d, loops / s: %d\n", now - last, loops_per_second);
 
