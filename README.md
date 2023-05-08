@@ -9,6 +9,18 @@ I'm making this for educational purposes.
 
 The documentation is not meant for others yet.
 
+## General setup
+
+On debian add yourself to the `dialout` group:
+
+```bash
+sudo usermod -a -G dialout $USER
+```
+
+Then log out and log back in or use `newgrp dialout` to apply the changes in the current shell.
+
+On ubuntu you should be able to communicate with `/dev/ttyACM0` by default.
+
 ## VSCode intellisense
 
 Clang doesn't seem to work great or at least I dunno how to make it work.

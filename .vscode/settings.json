@@ -2,9 +2,12 @@
     "cSpell.words": [
         "BOOTSEL",
         "clkdiv",
+        "dialout",
         "gpio",
         "minicom",
+        "newgrp",
         "pico",
-        "PICOLIGHT"
+        "PICOLIGHT",
+        "usermod"
     ]
 }
